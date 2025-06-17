@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model group {
+  id    Int    @id @default(autoincrement())
+  name  String @db.VarChar
+  users user[]
+}
+
+model position {
+  id    Int    @id @default(autoincrement())
+  name  String @db.VarChar
+  users user[]
+}
+
+model position_level {
+  id    Int    @id @default(autoincrement())
+  name  String @db.VarChar
+  users user[]
+}
+
+model room {
+  id            Int            @id @default(autoincrement())
+  name          String         @db.VarChar
+  image_url     String         @db.VarChar
+  capacity      Int
+  has_equipment Boolean
+  bookings      room_booking[]
+}
+
+model room_booking {
+  id             String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user           Int
+  room           Int
+  meeting_title  String   @db.VarChar
+  attendees      Int
+  start_datetime DateTime @db.Date
+  end_datetime   DateTime @db.Date
+  need_equipment Boolean
+  notes          String?  @db.VarChar
+
+  users user? @relation(fields: [user], references: [id])
+  rooms room? @relation(fields: [room], references: [id])
+}
+
+model user {
+  id                 Int      @id @default(autoincrement())
+  username           String   @unique @db.VarChar
+  password           String   @db.VarChar
+  email              String   @unique @db.VarChar
+  prefix             String   @db.VarChar
+  thai_f_name        String   @db.VarChar
+  thai_l_name        String   @db.VarChar
+  eng_f_name         String   @db.VarChar
+  eng_l_name         String   @db.VarChar
+  phone              String   @db.VarChar
+  line_id            String   @db.VarChar
+  role               String   @default("user") @db.VarChar
+  status             Boolean  @default(false)
+  group              Int
+  position           Int
+  position_level     Int
+  avatar_id          String   @db.VarChar
+  create_at          DateTime @default(now()) @db.Timestamp(6)
+  hashedRefreshToken String?  @db.VarChar
+
+  groups          group?          @relation(fields: [group], references: [id])
+  positions       position?       @relation(fields: [position], references: [id])
+  position_levels position_level? @relation(fields: [position_level], references: [id])
+  bookings        room_booking[]
+}
