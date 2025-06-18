@@ -60,7 +60,7 @@ export class BookingsService {
         `${dto.end_date.toISOString().split('T')[0]}T${dto.end_time}`,
       );
 
-      const isReserved = this.prisma.room_booking.findFirst({
+      const isReserved = await this.prisma.room_booking.findFirst({
         where: { start_datetime: startDateTime },
       });
 

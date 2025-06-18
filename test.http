@@ -1,0 +1,57 @@
+GET  https://lightly-finer-martin.ngrok-free.app/envocc-service/api/users HTTP/1.1
+
+###
+POST https://lightly-finer-martin.ngrok-free.app/envocc-service/api/auth/login HTTP/1.1
+Content-Type: application/json
+
+{
+  "username": "test",
+  "password": "1234"
+}
+
+###
+POST https://lightly-finer-martin.ngrok-free.app/envocc-service/api/auth/logout HTTP/1.1
+Content-Type: : application/json
+
+{
+  "username": "test",
+  "password": "1234"
+}
+
+###
+POST https://lightly-finer-martin.ngrok-free.app/envocc-service/api/auth/refresh HTTP/1.1
+Content-Type: application/json
+
+###
+# Register
+POST https://lightly-finer-martin.ngrok-free.app/envocc-service/api/auth/register HTTP/1.1
+Content-Type: application/json
+
+{
+  "username": "test",
+  "password": "1234",
+  "email": "test@mail.com",
+  "prefix": "นาย",
+  "thai_f_name": "ทดสอบ",
+  "thai_l_name": "ทดสอบ",
+  "eng_f_name": "test",
+  "eng_l_name": "test",
+  "phone": "0000000000",
+  "line_id": "@test",
+  "group": "f0666e34-d4bf-4567-874b-397517b91ace",
+  "position": "d1704ebf-6070-4d53-b9e6-5bf2f83c358e",
+  "position_level": "0f7113aa-a95c-420d-b127-11c985a87bff",
+  "avatar_id": "test.jpg"
+}
+
+###
+GET http://localhost:3600/envocc-service/api/users
+
+###
+POST http://localhost:3600/envocc-service/api/auth/login HTTP/1.1
+Content-Type: application/json
+
+{
+  "username": "test",
+  "password": "1234"
+}
