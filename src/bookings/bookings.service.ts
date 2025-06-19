@@ -96,4 +96,22 @@ export class BookingsService {
       }
     }
   }
+  async findAllBookingByUser(userId: number) {
+    try {
+      const bookings = await this.prisma.room_booking.findMany({
+        where: { user: userId },
+      });
+      return bookings;
+    } catch (error) {
+      this.logger.error(error);
+      if (
+        error instanceof PrismaClientKnownRequestError ||
+        error instanceof PrismaClientUnknownRequestError
+      ) {
+        throw new BadRequestException(error);
+      } else {
+        throw new InternalServerErrorException('something went wrong', error);
+      }
+    }
+  }
 }

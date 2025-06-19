@@ -23,7 +23,6 @@ import { RouterModule } from '@nestjs/core';
     }),
     UsersModule,
     AuthModule,
-
     PrismaModule,
     RouterModule.register([
       {

@@ -7,7 +7,6 @@ import { BookingsModule } from 'src/bookings/bookings.module';
 import { BookingsService } from 'src/bookings/bookings.service';
 
 @Module({
-  imports: [BookingsModule],
   controllers: [UsersController, BookingsController],
   providers: [UsersService, PrismaService, BookingsService],
 })
