@@ -3,10 +3,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
-import { BookingsModule } from './bookings/bookings.module';
 import { PrismaModule } from 'prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
+import { RouterModule } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -23,8 +23,14 @@ import * as Joi from 'joi';
     }),
     UsersModule,
     AuthModule,
-    BookingsModule,
+
     PrismaModule,
+    RouterModule.register([
+      {
+        path: 'users',
+        module: UsersModule,
+      },
+    ]),
   ],
   controllers: [AppController],
   providers: [AppService],
