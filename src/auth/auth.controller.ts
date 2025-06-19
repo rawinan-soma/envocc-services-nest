@@ -12,6 +12,8 @@ import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { RequestWithUser } from './request-with-user.interface';
 import { LocalAuthenGuard } from './local-authen.guard';
 import JwtRefreshGuard from './jwt-refresh.guard';
+import { JwtAccessGuard } from './jwt-access.guard';
+import { Public } from 'src/common/public.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -19,7 +21,8 @@ export class AuthController {
 
   @Post('register')
   async createUserHandler(@Body() user: CreateUserDto) {
-    return await this.service.createUser(user);
+    const newUser = await this.service.createUser(user);
+    return { msg: 'user created!!', user: newUser };
   }
 
   @HttpCode(200)
@@ -27,6 +30,7 @@ export class AuthController {
   @Post('login')
   async loginHandler(@Req() req: RequestWithUser) {
     const { user } = req;
+
     const accessTokenCookie = this.service.getCookieWithAccessToken(user.id);
     const refreshTokenCookie = this.service.getCookieFromRefreshToken(user.id);
 
@@ -68,6 +72,7 @@ export class AuthController {
     return { msg: 'token refresh' };
   }
 
+  @UseGuards(JwtAccessGuard)
   @Post('logout')
   async logoutHandler(@Req() req: RequestWithUser) {
     await this.service.removeRefreshToken(req.user.id);

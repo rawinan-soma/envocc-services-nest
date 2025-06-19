@@ -54,9 +54,9 @@ export class AuthService {
     try {
       const user = await this.prisma.user.findFirst({
         where: { username: username },
-        select: { password: true, username: true, id: true },
+        select: { password: true, username: true, id: true, role: true },
       });
-
+      this.logger.log('logging in');
       user === null || user === undefined
         ? new UnauthorizedException('invalid credential')
         : user;
@@ -107,7 +107,7 @@ export class AuthService {
     });
 
     return {
-      cookie: cookie.serialize('Authentication', token, {
+      cookie: cookie.serialize('Refresh', token, {
         httpOnly: true,
         path: '/',
         maxAge: Number(this.config.get('JWT_ACCESS_TOKEN_EXP_TIME')),

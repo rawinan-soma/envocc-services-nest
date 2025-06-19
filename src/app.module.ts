@@ -21,8 +21,8 @@ import { RouterModule } from '@nestjs/core';
         ENDPOINT_PREFIX: Joi.string().required(),
       }),
     }),
-    UsersModule,
     AuthModule,
+    UsersModule,
     PrismaModule,
     RouterModule.register([
       {

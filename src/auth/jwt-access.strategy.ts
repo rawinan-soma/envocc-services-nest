@@ -26,6 +26,10 @@ export class JwtAccessStrategy extends PassportStrategy(
   }
 
   async validate(payload: TokenPayload) {
-    return this.prisma.user.findUnique({ where: { id: payload.userId } });
+    console.log(payload);
+    return this.prisma.user.findUnique({
+      where: { id: payload.userId },
+      select: { username: true, role: true, id: true },
+    });
   }
 }
