@@ -13,7 +13,9 @@ export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
   async findAllUsers() {
     try {
-      const users = await this.prisma.user.findMany();
+      const users = await this.prisma.user.findMany({
+        omit: { password: true },
+      });
       return users;
     } catch (error) {
       this.logger.error(error);

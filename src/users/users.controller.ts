@@ -19,7 +19,6 @@ export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
   @Get()
-  @Roles('admin')
   async getAllUsersHandler() {
     return await this.userService.findAllUsers();
   }

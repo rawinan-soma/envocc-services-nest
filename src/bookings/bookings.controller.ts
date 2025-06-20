@@ -12,8 +12,7 @@ export class BookingsController {
 
   @Post()
   async reservedMeetingRoomHandler(@Body() room: CreateBookingDto) {
-    const booking = this.service.createBooking(room);
-    return { msg: 'booking success', booking_data: booking };
+    return await this.service.createBooking(room);
   }
 
   @Get('/me')

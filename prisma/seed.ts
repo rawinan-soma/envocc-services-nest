@@ -63,6 +63,32 @@ async function main() {
     skipDuplicates: true,
   });
   console.log('position level seeded');
+
+  await prisma.room.createMany({
+    data: [
+      {
+        name: 'ห้องประชุม 1 กองโรคจากการประกอบอาชีพและสิ่งแวดล้อม',
+        capacity: 30,
+        has_equipment: true,
+        image_url: 'asseys/test.jpeg',
+      },
+      {
+        name: 'ห้องประชุม 2 (ห้องเล็ก)',
+        capacity: 5,
+        has_equipment: false,
+        image_url: 'assets/test2.jpeg',
+      },
+      {
+        name: 'ห้องประชุม 3 (Free Setting)',
+        capacity: 10,
+        has_equipment: false,
+        image_url: 'assets/test3.jpeg',
+      },
+    ],
+    skipDuplicates: true,
+  });
+
+  console.log('room seeded');
 }
 
 main()
