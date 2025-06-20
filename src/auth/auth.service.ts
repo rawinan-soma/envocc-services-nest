@@ -56,7 +56,7 @@ export class AuthService {
         where: { username: username },
         select: { password: true, username: true, id: true, role: true },
       });
-      this.logger.log('logging in');
+      this.logger.log(`login by user: ${user?.username}`);
       user === null || user === undefined
         ? new UnauthorizedException('invalid credential')
         : user;
@@ -110,7 +110,7 @@ export class AuthService {
       cookie: cookie.serialize('Refresh', token, {
         httpOnly: true,
         path: '/',
-        maxAge: Number(this.config.get('JWT_ACCESS_TOKEN_EXP_TIME')),
+        maxAge: Number(this.config.get('JWT_REFRESH_TOKEN_EXP_TIME')),
         sameSite: 'lax',
         secure: false,
       }),

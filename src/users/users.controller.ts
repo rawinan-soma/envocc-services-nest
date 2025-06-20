@@ -13,12 +13,13 @@ import { JwtAccessGuard } from 'src/auth/jwt-access.guard';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { Roles } from 'src/common/roles.decorator';
 
-@UseGuards(JwtAccessGuard)
+@UseGuards(JwtAccessGuard, RolesGuard)
 @Controller()
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
   @Get()
+  @Roles('admin')
   async getAllUsersHandler() {
     return await this.userService.findAllUsers();
   }
