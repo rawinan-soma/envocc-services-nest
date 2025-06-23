@@ -75,3 +75,19 @@ model user {
   position_levels position_level? @relation(fields: [position_level], references: [id])
   bookings        room_booking[]
 }
+
+model conference_req {
+  id               String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  meeting_title    String   @db.VarChar()
+  meeting_password String
+  start_datetime   DateTime @db.Date
+  end_datetime     DateTime @db.Date
+}
+
+model conference_res {
+  id               String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  meeting_title    String
+  meeting_password String
+  meeting_link     String
+  meeting_number   String @db.VarChar()
+}
