@@ -73,6 +73,7 @@ export class AuthController {
     return { msg: 'token refresh' };
   }
 
+  @HttpCode(200)
   @UseGuards(JwtAccessGuard)
   @Post('logout')
   async logoutHandler(@Req() req: RequestWithUser) {

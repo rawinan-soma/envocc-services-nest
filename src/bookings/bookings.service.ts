@@ -137,37 +137,90 @@ export class BookingsService {
         throw new BadRequestException('booking did not exists');
       }
 
-      if (
-        !updated.start_date ||
-        !updated.end_date ||
-        !updated.start_time ||
-        !updated.end_time
-      ) {
+      const { start_date, start_time, end_date, end_time, ...rest } = updated;
+
+      if (end_date && start_date && start_time && end_time) {
+        const startDateTime = new Date(
+          `${start_date?.toISOString().split('T')[0]}T${start_time}`,
+        );
+
+        const endDateTime = new Date(
+          `${end_date?.toISOString().split('T')[0]}T${end_time}`,
+        );
+
+        if (startDateTime >= endDateTime) {
+          throw new BadRequestException(
+            'end time must be after the start time',
+          );
+        }
+
+        const isReserved = await this.prisma.room_booking.findFirst({
+          where: {
+            room: currentBooking.room,
+            AND: [
+              { start_datetime: { lt: endDateTime } },
+              { end_datetime: { gt: startDateTime } },
+            ],
+          },
+        });
+
+        if (isReserved) {
+          throw new BadRequestException(
+            'room is not available in this date/time',
+          );
+        }
+
+        return await this.prisma.room_booking.update({
+          where: { id: bookingId },
+          data: {
+            end_datetime: endDateTime,
+            start_datetime: startDateTime,
+            ...rest,
+          },
+        });
+      } else {
+        return await this.prisma.room_booking.update({
+          where: { id: bookingId },
+          data: rest,
+        });
       }
-
-      const startDateTime = new Date(
-        `${updated.start_date?.toISOString().split('T')[0]}T${updated?.start_time}`,
-      );
-
-      const endDateTime = new Date(
-        `${updated.end_date?.toISOString().split('T')[0]}T${updated?.end_time}`,
-      );
-
-      if (startDateTime >= endDateTime) {
-        throw new BadRequestException('end time must be after the start time');
+    } catch (error) {
+      this.logger.error(error);
+      if (error instanceof BadRequestException) {
+        throw error;
+      } else {
+        throw new InternalServerErrorException('something went wrong', error);
       }
+    }
+  }
 
-      const isReserved = await this.prisma.room_booking.findFirst({
-        where: {
-          room: currentBooking.room,
-          AND: [
-            { start_datetime: { lt: endDateTime } },
-            { end_datetime: { gt: startDateTime } },
-          ],
-        },
+  async deleteBooking(bookingId: UUID) {
+    try {
+      const currentBooking = await this.prisma.room_booking.findUnique({
+        where: { id: bookingId },
       });
 
-      // return await this.prisma.room_booking.update();
-    } catch (error) {}
+      if (!currentBooking) {
+        throw new BadRequestException('booking did not exist');
+      }
+
+      return await this.prisma.room_booking.delete({
+        where: { id: bookingId },
+      });
+    } catch (error) {
+      this.logger.error(error);
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+
+      if (
+        error instanceof PrismaClientKnownRequestError ||
+        error instanceof PrismaClientUnknownRequestError
+      ) {
+        throw new BadRequestException(error);
+      }
+
+      throw new InternalServerErrorException('something went wrong', error);
+    }
   }
 }
