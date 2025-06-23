@@ -7,6 +7,7 @@ import { PrismaModule } from 'prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import { RouterModule } from '@nestjs/core';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { RouterModule } from '@nestjs/core';
         ENDPOINT_PREFIX: Joi.string().required(),
       }),
     }),
+    HttpModule,
     AuthModule,
     UsersModule,
     PrismaModule,
