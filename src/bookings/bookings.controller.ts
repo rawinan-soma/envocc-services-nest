@@ -30,17 +30,17 @@ export class BookingsController {
   @Get('me')
   async getAllBookingsByUserHandler(@Req() req: RequestWithUser) {
     const userId = req.user.id;
-    return await this.service.findAllBookingByUser(userId);
+    return await this.service.getAllBookingByUser(userId);
   }
 
   @Get()
   async getAllBookingsHandler() {
-    return await this.service.findAllBookings();
+    return await this.service.getAllBookings();
   }
 
   @Get(':id')
   async getBookingByIdHandler(@Param('id') id: UUID) {
-    return await this.service.findBookingById(id);
+    return await this.service.getBookingById(id);
   }
 
   @Patch(':id')

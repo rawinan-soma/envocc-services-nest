@@ -20,6 +20,6 @@ export class UsersController {
 
   @Get()
   async getAllUsersHandler() {
-    return await this.userService.findAllUsers();
+    return await this.userService.getAllUsers();
   }
 }

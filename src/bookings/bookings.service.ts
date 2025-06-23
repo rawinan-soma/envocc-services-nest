@@ -18,7 +18,7 @@ import { UUID } from 'crypto';
 export class BookingsService {
   private readonly logger = new Logger(BookingsService.name);
   constructor(private readonly prisma: PrismaService) {}
-  async findAllBookings() {
+  async getAllBookings() {
     try {
       const bookings = await this.prisma.room_booking.findMany();
       return bookings;
@@ -28,7 +28,7 @@ export class BookingsService {
     }
   }
 
-  async findBookingById(bookingId: string) {
+  async getBookingById(bookingId: string) {
     try {
       const booking = await this.prisma.room_booking.findUniqueOrThrow({
         where: { id: bookingId },
@@ -36,6 +36,7 @@ export class BookingsService {
 
       return booking;
     } catch (error) {
+      this.logger.error(error);
       if (error instanceof PrismaClientUnknownRequestError) {
         throw new BadRequestException(error);
       } else if (error instanceof NotFoundException) {
@@ -111,7 +112,7 @@ export class BookingsService {
     }
   }
 
-  async findAllBookingByUser(userId: number) {
+  async getAllBookingByUser(userId: number) {
     try {
       const bookings = await this.prisma.room_booking.findMany({
         where: { user: userId },
@@ -132,7 +133,7 @@ export class BookingsService {
 
   async updateBooking(updated: UpdateBookingDto, bookingId: UUID) {
     try {
-      const currentBooking = await this.findBookingById(bookingId);
+      const currentBooking = await this.getBookingById(bookingId);
       if (!currentBooking) {
         throw new BadRequestException('booking did not exists');
       }

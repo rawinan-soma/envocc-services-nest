@@ -11,7 +11,7 @@ import { PrismaService } from 'prisma/prisma.service';
 export class UsersService {
   private readonly logger = new Logger(UsersService.name);
   constructor(private readonly prisma: PrismaService) {}
-  async findAllUsers() {
+  async getAllUsers() {
     try {
       const users = await this.prisma.user.findMany({
         omit: { password: true },

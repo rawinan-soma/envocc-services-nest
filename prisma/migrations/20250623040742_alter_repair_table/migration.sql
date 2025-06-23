@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "repair_req" ADD COLUMN     "create_at" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP;
