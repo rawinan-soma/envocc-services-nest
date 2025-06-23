@@ -82,12 +82,18 @@ model conference_req {
   meeting_password String
   start_datetime   DateTime @db.Date
   end_datetime     DateTime @db.Date
+  user             Int
+  room             Int
+  equipment        String
+  role             String
+  app              String
 }
 
 model conference_res {
-  id               String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  meeting_title    String
-  meeting_password String
-  meeting_link     String
-  meeting_number   String @db.VarChar()
+  id                String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  conference_req_id String
+  meeting_title     String
+  meeting_password  String
+  meeting_link      String
+  meeting_number    String @db.VarChar()
 }
