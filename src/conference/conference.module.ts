@@ -3,7 +3,7 @@ import { ConferenceService } from './conference.service';
 import { ConferenceController } from './conference.controller';
 
 @Module({
-  controllers: [ConferenceController],
+  controllers: [],
   providers: [ConferenceService],
 })
 export class ConferenceModule {}
