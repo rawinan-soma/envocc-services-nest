@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import { RouterModule } from '@nestjs/core';
 import { HttpModule } from '@nestjs/axios';
+import { DiscordModule } from './discord/discord.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { HttpModule } from '@nestjs/axios';
         SERVER_PORT: Joi.number().required(),
         SERVER_URL: Joi.string().required(),
         ENDPOINT_PREFIX: Joi.string().required(),
+        TICKET_URL: Joi.string().required(),
       }),
     }),
     HttpModule,

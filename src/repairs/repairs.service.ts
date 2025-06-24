@@ -20,7 +20,22 @@ export class RepairsService {
 
   async createTicket(ticket: CreateTicketDto) {
     try {
-      return await this.prisma.repair_req.create({ data: ticket });
+      return await this.prisma.repair_req.create({
+        data: ticket,
+        select: {
+          create_at: true,
+          problem: true,
+          device: true,
+          description: true,
+          users: {
+            select: {
+              thai_f_name: true,
+              thai_l_name: true,
+              groups: { select: { name: true } },
+            },
+          },
+        },
+      });
     } catch (error) {
       this.logger.error(error);
 
