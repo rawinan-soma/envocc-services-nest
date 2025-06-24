@@ -36,8 +36,8 @@ model room {
 
 model room_booking {
   id             String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  user           Int
-  room           Int
+  userId         Int
+  roomId         Int
   meeting_title  String   @db.VarChar
   attendees      Int
   start_datetime DateTime @db.Date
@@ -45,8 +45,9 @@ model room_booking {
   need_equipment Boolean
   notes          String?  @db.VarChar
 
-  users user @relation(fields: [user], references: [id])
-  rooms room @relation(fields: [room], references: [id])
+  user       user            @relation(fields: [userId], references: [id])
+  room       room            @relation(fields: [roomId], references: [id])
+  conference conference_req?
 }
 
 model user {
@@ -63,42 +64,46 @@ model user {
   line_id            String   @db.VarChar
   role               String   @default("user") @db.VarChar
   status             Boolean  @default(false)
-  group              Int
-  position           Int
-  position_level     Int
+  groupId            Int
+  positionId         Int
+  position_levelId   Int
   avatar_id          String   @db.VarChar
   create_at          DateTime @default(now()) @db.Timestamp(6)
   hashedRefreshToken String?  @db.VarChar
 
-  groups          group          @relation(fields: [group], references: [id])
-  positions       position       @relation(fields: [position], references: [id])
-  position_levels position_level @relation(fields: [position_level], references: [id])
-  bookings        room_booking[]
-  repairs         repair_req[]
+  group          group            @relation(fields: [groupId], references: [id])
+  position       position         @relation(fields: [positionId], references: [id])
+  position_level position_level   @relation(fields: [position_levelId], references: [id])
+  bookings       room_booking[]
+  repairs        repair_req[]
+  conferences    conference_req[]
 }
 
 model repair_req {
   ticketId    String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  user        Int
+  userId      Int
   device      String
   problem     String
   description String?
   create_at   DateTime @default(now()) @db.Timestamp(6)
 
-  users user @relation(fields: [user], references: [id])
+  user user @relation(fields: [userId], references: [id])
 }
 
 model conference_req {
   id               String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  bookingId        String?  @unique @db.Uuid
+  userId           Int
   meeting_title    String   @db.VarChar()
   meeting_password String
   start_datetime   DateTime @db.Date
   end_datetime     DateTime @db.Date
-  user             Int
-  room             Int
   equipment        String
   role             String
   app              String
+
+  booking room_booking? @relation(fields: [bookingId], references: [id])
+  user    user?         @relation(fields: [userId], references: [id])
 }
 
 model conference_res {

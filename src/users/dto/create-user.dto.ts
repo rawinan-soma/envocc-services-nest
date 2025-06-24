@@ -11,9 +11,9 @@ export class CreateUserDto {
   eng_l_name: string;
   phone: string;
   line_id: string;
-  group: number;
-  position: number;
-  position_level: number;
+  groupId: number;
+  positionId: number;
+  position_levelId: number;
   avatar_id: string;
 
   @Exclude()

@@ -69,7 +69,7 @@ export class BookingsService {
 
       const isReserved = await this.prisma.room_booking.findFirst({
         where: {
-          room: dto.room,
+          roomId: dto.roomId,
           AND: [
             { start_datetime: { lt: endDateTime } },
             { end_datetime: { gt: startDateTime } },
@@ -85,8 +85,8 @@ export class BookingsService {
 
       const result = await this.prisma.room_booking.create({
         data: {
-          user: dto.user,
-          room: dto.room,
+          userId: dto.userId,
+          roomId: dto.roomId,
           attendees: dto.attendees,
           meeting_title: dto.meeting_title,
           need_equipment: dto.need_equipment,
@@ -115,7 +115,7 @@ export class BookingsService {
   async getAllBookingByUser(userId: number) {
     try {
       const bookings = await this.prisma.room_booking.findMany({
-        where: { user: userId },
+        where: { userId: userId },
       });
       return bookings;
     } catch (error) {
@@ -157,7 +157,7 @@ export class BookingsService {
 
         const isReserved = await this.prisma.room_booking.findFirst({
           where: {
-            room: currentBooking.room,
+            roomId: currentBooking.roomId,
             AND: [
               { start_datetime: { lt: endDateTime } },
               { end_datetime: { gt: startDateTime } },

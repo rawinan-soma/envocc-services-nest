@@ -28,8 +28,8 @@ export class RepairsController {
     const ticket = await this.repairService.createTicket(dto);
 
     const content = `🚨!! **แจ้งซ่อม** !!🚨\n
-    ชื่อผู้แจ้ง: ${ticket.users.thai_f_name} ${ticket.users.thai_l_name}
-    กลุ่ม: ${ticket.users.groups.name}
+    ชื่อผู้แจ้ง: ${ticket.user.thai_f_name} ${ticket.user.thai_l_name}
+    กลุ่ม: ${ticket.user.group.name}
     อุปกรณ์: ${ticket.device}
     ปัญหาที่พบ: ${ticket.problem}
     รายละเอียด: ${ticket.description ? ticket.description : 'ไม่รู้'}

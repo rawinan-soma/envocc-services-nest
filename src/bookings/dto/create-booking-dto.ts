@@ -2,8 +2,8 @@ import { Type } from 'class-transformer';
 import { Matches } from 'class-validator';
 
 export class CreateBookingDto {
-  user: number;
-  room: number;
+  userId: number;
+  roomId: number;
   meeting_title: string;
   attendees: number;
 
@@ -22,4 +22,6 @@ export class CreateBookingDto {
   need_equipment: boolean;
 
   notes?: string;
+
+  hasConference: boolean;
 }

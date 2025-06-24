@@ -1,5 +1,5 @@
 export class CreateTicketDto {
-  user: number;
+  userId: number;
   device: string;
   problem: string;
   description: string;

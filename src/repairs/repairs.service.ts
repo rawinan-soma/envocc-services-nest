@@ -27,11 +27,11 @@ export class RepairsService {
           problem: true,
           device: true,
           description: true,
-          users: {
+          user: {
             select: {
               thai_f_name: true,
               thai_l_name: true,
-              groups: { select: { name: true } },
+              group: { select: { name: true } },
             },
           },
         },
@@ -52,7 +52,7 @@ export class RepairsService {
 
   async getTicketByUser(user: number) {
     try {
-      return await this.prisma.repair_req.findMany({ where: { user: user } });
+      return await this.prisma.repair_req.findMany({ where: { userId: user } });
     } catch (error) {
       this.logger.error(error);
       if (
