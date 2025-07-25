@@ -1,0 +1,13 @@
+-- AlterTable
+ALTER TABLE "conference_req" ALTER COLUMN "start_datetime" SET DATA TYPE TIMESTAMPTZ,
+ALTER COLUMN "end_datetime" SET DATA TYPE TIMESTAMPTZ;
+
+-- AlterTable
+ALTER TABLE "repair_req" ALTER COLUMN "create_at" SET DATA TYPE TIMESTAMPTZ;
+
+-- AlterTable
+ALTER TABLE "room_booking" ALTER COLUMN "start_datetime" SET DATA TYPE TIMESTAMPTZ,
+ALTER COLUMN "end_datetime" SET DATA TYPE TIMESTAMPTZ;
+
+-- AlterTable
+ALTER TABLE "user" ALTER COLUMN "create_at" SET DATA TYPE TIMESTAMPTZ;
