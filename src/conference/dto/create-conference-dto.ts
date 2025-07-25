@@ -1,21 +1,8 @@
-import { Type } from 'class-transformer';
-
 export class CreateConferenceDto {
-  bookingId?: String;
-  meeting_title: String;
-  meeting_password?: String;
+  meeting_title: string;
+  meeting_password: string;
 
-  @Type(() => Date)
-  start_date: Date;
+  userId: string;
 
-  @Type(() => Date)
-  end_date: Date;
-
-  start_time: String;
-
-  end_time: String;
-
-  userId: String;
-
-  equipment: String;
+  equipment: string;
 }

@@ -13,6 +13,8 @@ import { CreateBookingDto } from './dto/create-booking-dto';
 import { PrismaService } from 'prisma/prisma.service';
 import { UpdateBookingDto } from './dto/update-booking-dto';
 import { UUID } from 'crypto';
+import generator from 'generate-password-ts';
+import { toZonedTime } from 'date-fns-tz';
 
 @Injectable()
 export class BookingsService {
@@ -21,6 +23,21 @@ export class BookingsService {
   async getAllBookings() {
     try {
       const bookings = await this.prisma.room_booking.findMany();
+
+      // bookings[0].start_datetime = toZonedTime(
+      //   bookings[0].start_datetime,
+      //   'Asia/Bangkok',
+      // );
+      // bookings[0].end_datetime = toZonedTime(
+      //   bookings[0].end_datetime,
+      //   'Asia/Bangkok',
+      // );
+
+      // bookings[0].start_datetime = format(
+      //   bookings[0].start_datetime,
+      //   'yyyy-MM-dd HH:mm:ssXX',
+      //   { timeZone: 'Asia/Bangkok' },
+      // );
       return bookings;
     } catch (error) {
       this.logger.error(error);
@@ -55,18 +72,24 @@ export class BookingsService {
 
   async createBooking(dto: CreateBookingDto) {
     try {
-      const startDateTime = new Date(
-        `${dto.start_date.toISOString().split('T')[0]}T${dto.start_time}`,
+      // date create
+      const startDateTime = toZonedTime(
+        new Date(
+          `${dto.start_date.toISOString().split('T')[0]}T${dto.start_time}`,
+        ),
+        'Asia/Bangkok',
       );
 
-      const endDateTime = new Date(
-        `${dto.end_date.toISOString().split('T')[0]}T${dto.end_time}`,
+      const endDateTime = toZonedTime(
+        new Date(`${dto.end_date.toISOString().split('T')[0]}T${dto.end_time}`),
+        'Asia/Bangkok',
       );
 
       if (startDateTime >= endDateTime) {
         throw new BadRequestException('end time must be after the start time');
       }
 
+      // check room available
       const isReserved = await this.prisma.room_booking.findFirst({
         where: {
           roomId: dto.roomId,
@@ -82,21 +105,80 @@ export class BookingsService {
           'room is not available at selected date/time',
         );
       }
+      // If hasConference = true => Create Transaction 2 table
 
-      const result = await this.prisma.room_booking.create({
+      if (dto.hasConference && dto.conference_request) {
+        const meeting_password = generator.generate({
+          length: 6,
+          uppercase: false,
+          numbers: true,
+        });
+        const booking = await this.prisma.room_booking.create({
+          data: {
+            userId: dto.userId,
+            roomId: dto.roomId,
+            attendees: dto.attendees,
+            meeting_title: dto.meeting_title,
+            need_equipment: dto.need_equipment,
+            notes: dto.notes,
+            end_datetime: endDateTime,
+            start_datetime: startDateTime,
+            conference: {
+              create: {
+                userId: dto.userId,
+                meeting_password: meeting_password,
+                meeting_title: dto.conference_request.meeting_title,
+                start_datetime: startDateTime,
+                end_datetime: endDateTime,
+                equipment: dto.conference_request.equipment,
+              },
+            },
+          },
+          select: {
+            start_datetime: true,
+            end_datetime: true,
+            meeting_title: true,
+            room: {
+              select: {
+                name: true,
+              },
+            },
+            user: {
+              select: { thai_f_name: true, thai_l_name: true },
+            },
+            conference: true,
+          },
+        });
+        return booking;
+      }
+      // If not create only booking
+      const booking = await this.prisma.room_booking.create({
         data: {
           userId: dto.userId,
           roomId: dto.roomId,
-          attendees: dto.attendees,
           meeting_title: dto.meeting_title,
+          attendees: dto.attendees,
+          start_datetime: startDateTime,
+          end_datetime: endDateTime,
           need_equipment: dto.need_equipment,
           notes: dto.notes,
-          end_datetime: endDateTime,
-          start_datetime: startDateTime,
         },
-        select: { id: true, meeting_title: true },
+        select: {
+          start_datetime: true,
+          end_datetime: true,
+          meeting_title: true,
+          room: {
+            select: {
+              name: true,
+            },
+          },
+          user: {
+            select: { thai_f_name: true, thai_l_name: true },
+          },
+          conference: true,
+        },
       });
-      return result;
+      return booking;
     } catch (error) {
       if (error instanceof BadRequestException) {
         throw error;
@@ -126,7 +208,10 @@ export class BookingsService {
       ) {
         throw new BadRequestException(error);
       } else {
-        throw new InternalServerErrorException('something went wrong', error);
+        throw new InternalServerErrorException(
+          'something went wrong',
+          String(error),
+        );
       }
     }
   }
@@ -190,7 +275,10 @@ export class BookingsService {
       if (error instanceof BadRequestException) {
         throw error;
       } else {
-        throw new InternalServerErrorException('something went wrong', error);
+        throw new InternalServerErrorException(
+          'something went wrong',
+          String(error),
+        );
       }
     }
   }
@@ -221,7 +309,10 @@ export class BookingsService {
         throw new BadRequestException(error);
       }
 
-      throw new InternalServerErrorException('something went wrong', error);
+      throw new InternalServerErrorException(
+        'something went wrong',
+        String(error),
+      );
     }
   }
 }

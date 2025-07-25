@@ -89,6 +89,27 @@ async function main() {
   });
 
   console.log('room seeded');
+
+  await prisma.user.create({
+    data: {
+      username: 'test',
+      password: '$2a$10$jH.LBbrJyelezFxLvKaEXuEKp.WEiYz/.h.VwabMrmiN3HKQffun2',
+      email: 'test@mail.com',
+      prefix: 'นาย',
+      thai_f_name: 'ทดสอบ',
+      thai_l_name: 'ทดสอบ',
+      eng_f_name: 'test',
+      eng_l_name: 'test',
+      phone: '0000000000',
+      line_id: '@test',
+      groupId: 1,
+      positionId: 1,
+      position_levelId: 1,
+      avatar_id: 'test.jpg',
+    },
+  });
+
+  console.log('user seed');
 }
 
 main()

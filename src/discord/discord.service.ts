@@ -28,11 +28,11 @@ export class DiscordService {
   // }
 
   async sendTicketToDiscord(content: string) {
-    const ticketUrl = this.config.get('TICKET_URL');
+    const ticketUrl: string | undefined = this.config.get('TICKET_URL');
 
     const body = { content };
     try {
-      await firstValueFrom(this.http.post(ticketUrl, body));
+      await firstValueFrom(this.http.post(String(ticketUrl), body));
     } catch (error) {
       this.logger.error(error);
       throw new InternalServerErrorException('something went wrong');

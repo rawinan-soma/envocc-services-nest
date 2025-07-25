@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
 import { Matches } from 'class-validator';
+import { CreateConferenceDto } from 'src/conference/dto/create-conference-dto';
 
 export class CreateBookingDto {
   userId: number;
@@ -24,4 +25,6 @@ export class CreateBookingDto {
   notes?: string;
 
   hasConference: boolean;
+
+  conference_request?: CreateConferenceDto;
 }

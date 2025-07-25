@@ -1,8 +1,8 @@
 import {
   Body,
   Controller,
-  Get,
   HttpCode,
+  Logger,
   Post,
   Req,
   UseGuards,
@@ -13,10 +13,10 @@ import { RequestWithUser } from './request-with-user.interface';
 import { LocalAuthenGuard } from './local-authen.guard';
 import JwtRefreshGuard from './jwt-refresh.guard';
 import { JwtAccessGuard } from './jwt-access.guard';
-import { Public } from 'src/common/public.decorator';
 
 @Controller('auth')
 export class AuthController {
+  private readonly logger = new Logger(AuthController.name, {});
   constructor(private readonly service: AuthService) {}
 
   @Post('register')
@@ -44,6 +44,8 @@ export class AuthController {
       refreshTokenCookie.cookie,
     ]);
 
+    this.logger.log(`user: ${user.id} logged in`);
+
     return {
       msg: 'login successful',
       username: user.username,
@@ -55,7 +57,7 @@ export class AuthController {
   @UseGuards(JwtRefreshGuard)
   @Post('refresh')
   @HttpCode(200)
-  async refreshTokenHandler(@Req() req: RequestWithUser) {
+  refreshTokenHandler(@Req() req: RequestWithUser) {
     const accessTokenCookie = this.service.getCookieWithAccessToken(
       req.user.id,
     );
@@ -70,6 +72,7 @@ export class AuthController {
     // );
 
     req.res?.setHeader('Set-Cookie', accessTokenCookie);
+    this.logger.log(`user: ${req.user.id} refreshed token`);
     return { msg: 'token refresh' };
   }
 
@@ -79,6 +82,7 @@ export class AuthController {
   async logoutHandler(@Req() req: RequestWithUser) {
     await this.service.removeRefreshToken(req.user.id);
     req.res?.setHeader('Set-Cookie', this.service.getLogoutCookie());
+    this.logger.log(`user: ${req.user.id} logged out`);
     return { msg: 'logout successful' };
   }
 }

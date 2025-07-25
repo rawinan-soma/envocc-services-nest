@@ -3,8 +3,7 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { PrismaService } from 'prisma/prisma.service';
 
 @Injectable()
@@ -20,6 +19,19 @@ export class UsersService {
     } catch (error) {
       this.logger.error(error);
       throw new InternalServerErrorException('something went wrong');
+    }
+  }
+
+  async getCurrentUser(userId: number) {
+    try {
+      const user = await this.prisma.user.findFirst({
+        where: { id: userId },
+      });
+
+      return user;
+    } catch (error) {
+      this.logger.error(error);
+      if (error instanceof PrismaClientKnownRequestError)
     }
   }
 }

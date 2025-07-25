@@ -1,7 +1,5 @@
 import {
-  BadGatewayException,
   BadRequestException,
-  HttpStatus,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -41,7 +39,7 @@ export class AuthService {
           case 'P2002':
             throw new BadRequestException('username or email alredy exists');
           default:
-            throw new BadGatewayException('create user failed', error);
+            throw new BadRequestException('create user failed', error);
         }
       } else {
         this.logger.error(error);
@@ -56,13 +54,15 @@ export class AuthService {
         where: { username: username },
         select: { password: true, username: true, id: true, role: true },
       });
-      this.logger.log(`login by user: ${user?.username}`);
-      user === null || user === undefined
-        ? new UnauthorizedException('invalid credential')
-        : user;
 
-      await this.verifypassword(password, user?.password || '');
-      user?.password ? undefined : undefined;
+      if (!user) {
+        throw new UnauthorizedException('invalid credential');
+      }
+
+      await this.verifypassword(password, user.password);
+
+      user.password = '';
+
       return user;
     } catch (error) {
       if (error instanceof PrismaClientUnknownRequestError) {

@@ -46,7 +46,10 @@ export class RepairsService {
         throw new BadRequestException(error);
       }
 
-      throw new InternalServerErrorException('something went wrong', error);
+      throw new InternalServerErrorException(
+        'something went wrong',
+        String(error),
+      );
     }
   }
 
@@ -62,13 +65,16 @@ export class RepairsService {
         throw new BadRequestException(error);
       }
 
-      throw new InternalServerErrorException('something went wrong', error);
+      throw new InternalServerErrorException(
+        'something went wrong',
+        String(error),
+      );
     }
   }
 
   async getTicketById(ticketId: UUID) {
     try {
-      const ticket = this.prisma.repair_req.findUnique({
+      const ticket = await this.prisma.repair_req.findUnique({
         where: { ticketId: ticketId },
       });
 
@@ -84,7 +90,10 @@ export class RepairsService {
         throw error;
       }
 
-      throw new InternalServerErrorException('something went wrong', error);
+      throw new InternalServerErrorException(
+        'something went wrong',
+        String(error),
+      );
     }
   }
 }
