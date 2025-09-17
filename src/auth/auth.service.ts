@@ -28,10 +28,13 @@ export class AuthService {
   async createUser(dto: CreateUserDto) {
     try {
       const hashedPassword = await bcrypt.hash(dto.password, 10);
-      return await this.prisma.user.create({
+
+      const user = await this.prisma.user.create({
         data: { ...dto, password: hashedPassword },
         select: { username: true, role: true },
       });
+
+      return user;
     } catch (error) {
       this.logger.error(error);
       if (error instanceof PrismaClientKnownRequestError) {
